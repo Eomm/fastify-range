@@ -27,30 +27,78 @@ test('Basic usage', async t => {
   t.equal(res.statusCode, 200)
 })
 
-test('Basic API', async t => {
-  t.plan(2)
-
+test('Expectations', async t => {
   const app = await buildApp(t)
 
   app.get('/', (req, reply) => {
-    return {
-      range: req.range(100)
-    }
+    return req.range(100, { combine: false }) || null
   })
 
-  const res = await app.inject({
-    url: '/',
-    headers: {
-      range: 'bytes=0-200, 100-300'
-    }
+  const expectations = [
+    [null, null],
+    ['bytes=0-200, 100-300', { unit: 'bytes', ranges: [{ start: 0, end: 99 }] }],
+    ['bytes=50-99', { unit: 'bytes', ranges: [{ start: 50, end: 99 }] }],
+    ['users=0-3', { unit: 'users', ranges: [{ start: 0, end: 3 }] }]
+  ]
+  t.plan(expectations.length * 2)
+
+  for (const [range, out] of expectations) {
+    const res = await app.inject({
+      url: '/',
+      headers: { ...(range ? { range } : {}) }
+    })
+
+    t.equal(res.statusCode, 200)
+    t.same(res.json(), out)
+  }
+})
+
+test('Failure Expectations with throwOnInvalid:true', async t => {
+  const app = await buildApp(t, { throwOnInvalid: true })
+
+  app.get('/', (req, reply) => {
+    return req.range(100, { combine: false }) || null
   })
 
-  t.equal(res.statusCode, 200)
-  t.same(JSON.parse(res.body), {
-    range: [
-      { start: 0, end: 99 } // trimmed to 100
-    ]
+  const expectations = [
+    ['bytes=100-200', 'Unsatisfiable range'],
+    ['asd', 'Malformed header string']
+  ]
+  t.plan(expectations.length * 2)
+
+  for (const [range, out] of expectations) {
+    const res = await app.inject({
+      url: '/',
+      headers: { ...(range ? { range } : {}) }
+    })
+
+    t.equal(res.statusCode, 500)
+    t.same(res.json().message, out)
+  }
+})
+
+test('Failure Expectations with throwOnInvalid:false', async t => {
+  const app = await buildApp(t)
+
+  app.get('/', (req, reply) => {
+    return req.range(100, { combine: false }) || null
   })
+
+  const expectations = [
+    ['bytes=100-200', null],
+    ['asd', null]
+  ]
+  t.plan(expectations.length * 2)
+
+  for (const [range, out] of expectations) {
+    const res = await app.inject({
+      url: '/',
+      headers: { ...(range ? { range } : {}) }
+    })
+
+    t.equal(res.statusCode, 200)
+    t.same(res.json(), out)
+  }
 })
 
 test('Double register must fail', async t => {

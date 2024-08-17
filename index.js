@@ -8,10 +8,24 @@ function fastifyRange (fastify, options, next) {
     return next(new Error('fastify-range cannot be registered more than once'))
   }
 
-  fastify.decorateRequest('range', function range (size, options) {
+  const throwOnInvalid = options?.throwOnInvalid
+
+  fastify.decorateRequest('range', function range (size, rangeParserOptions) {
     const range = this.headers.range
-    if (!range) return
-    return rangeParser(size, range, options)
+    if (!range) { return }
+
+    const res = rangeParser(size, range, rangeParserOptions)
+    if (res < 0) {
+      if (throwOnInvalid && res === -2) {
+        throw new Error('Malformed header string')
+      } else if (throwOnInvalid && res === -1) {
+        throw new Error('Unsatisfiable range')
+      }
+
+      return undefined
+    }
+
+    return { unit: res.type, ranges: res }
   })
 
   next()
