@@ -1,24 +1,16 @@
-# template-nodejs
+# fastify-range
 
-A template to build a Fastify plugin!  
-Look for `CHANGE ME` string to spot where adjust this template.
-
----
-
-CHANGE ME: module description
-
+[![ci](https://github.com/Eomm/fastify-range/actions/workflows/ci.yml/badge.svg)](https://github.com/Eomm/fastify-range/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/fastify-range)](https://www.npmjs.com/package/fastify-range)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-```
-[![Build Status](https://github.com/Eomm/CHANGE ME/workflows/ci/badge.svg)](https://github.com/Eomm/CHANGE ME/actions)
-
-```
-
+This Fastify plugin adds support for the [`Range` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Range).
+It provides the same API as `expressjs`'s `req.range()`.
 
 ## Install
 
 ```
-npm install <CHANGE ME>
+npm install fastify-range
 ```
 
 ### Compatibility
@@ -31,7 +23,17 @@ npm install <CHANGE ME>
 ## Usage
 
 ```js
-// CHANGE ME: some code
+const fastify = require('fastify')
+const range = require('fastify-range')
+
+const app = fastify()
+app.register(range)
+
+app.get('/', (req, reply) => {
+  const size = 1000
+  const options = { combine: true }
+  return 'Read: ' + req.range(size, options)
+})
 ```
 
 

@@ -1,39 +1,38 @@
 {
-  "name": "change-me",
+  "name": "@eomm/fastify-range",
   "version": "0.0.1",
-  "description": "<CHANGE ME>",
+  "description": "Parse the Range header easily",
   "main": "index.js",
-  "types": "types/index.d.ts",
   "scripts": {
     "lint": "standard",
     "lint:fix": "standard --fix",
-    "test": "npm run test:unit && npm run test:typescript",
-    "test:typescript": "tsd",
+    "test": "npm run test:unit",
     "test:unit": "tap"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Eomm/<CHANGE ME>.git"
+    "url": "git+https://github.com/Eomm/fastify-range.git"
   },
   "keywords": [
     "fastify",
     "plugin",
     "fastify-plugin",
-    "<CHANGE ME>"
+    "Range",
+    "header"
   ],
   "author": "Manuel Spigolon <behemoth89@gmail.com> (https://github.com/Eomm)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Eomm/<CHANGE ME>/issues"
+    "url": "https://github.com/Eomm/fastify-range/issues"
   },
-  "homepage": "https://github.com/Eomm/<CHANGE ME>#readme",
+  "homepage": "https://github.com/Eomm/fastify-range#readme",
   "devDependencies": {
     "fastify": "^4.10.2",
     "standard": "^17.0.0",
-    "tap": "^16.3.2",
-    "tsd": "^0.31.0"
+    "tap": "^16.3.2"
   },
   "dependencies": {
-    "fastify-plugin": "^4.4.0"
+    "fastify-plugin": "^4.4.0",
+    "range-parser": "^1.2.1"
   }
 }
