@@ -4,7 +4,7 @@
 [![npm](https://img.shields.io/npm/v/fastify-range)](https://www.npmjs.com/package/fastify-range)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-This Fastify plugin adds support for the [`Range` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Range).
+This Fastify plugin adds support for the [`Range` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Range).  
 It provides the same API as `expressjs`'s `req.range(size[, options])` with a consistent response.
 
 ## Install
@@ -23,12 +23,14 @@ npm install fastify-range
 ## Usage
 
 Register the plugin and use `request.range(size[, options])` in your routes.
-It parse `Range` header, capping to the given `size`. It returns the following response:
+The `options` object is optional and it will be passed to the [`range-parser`](https://www.npmjs.com/package/range-parser#api) module under the hood.
+
+The decorator parses the `Range` header, capping to the given `size`. It returns the following response:
 
 - returns `undefined` if the header is missing
 - if `throwOnInvalid` is true, throws an error if the header is an invalid string, otherwise returns `undefined`
 - if `throwOnInvalid` is true, throws an error if the range is unsatisfiable, otherwise returns `undefined`
-- when the header is good, it returns an object with the following properties:
+- when the header is good, it returns an object with the following example structure:
 
 ```js
 {
@@ -41,6 +43,7 @@ It parse `Range` header, capping to the given `size`. It returns the following r
 }
 ```
 
+### Example
 
 ```js
 const fastify = require('fastify')

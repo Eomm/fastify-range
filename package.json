@@ -1,5 +1,5 @@
 {
-  "name": "@eomm/fastify-range",
+  "name": "fastify-range",
   "version": "0.0.1",
   "description": "Parse the Range header easily",
   "main": "index.js",
