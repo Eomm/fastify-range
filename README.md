@@ -17,6 +17,7 @@ npm install fastify-range
 
 | Plugin version | Fastify version |
 | -------------- |:---------------:|
+| `^2.0.0`       | `^5.0.0`        |
 | `^1.0.0`       | `^4.0.0`        |
 
 
