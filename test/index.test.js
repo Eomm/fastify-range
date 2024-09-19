@@ -53,6 +53,30 @@ test('Expectations', async t => {
   }
 })
 
+test('Expectations - can loop ranges', async t => {
+  const app = await buildApp(t)
+  t.plan(5)
+
+  app.get('/', (req, reply) => {
+    const ranges = req.range(1000, { combine: false })
+    t.equal(ranges.ranges.length, 2)
+    t.same(ranges.ranges, [{ start: 0, end: 99 }, { start: 900, end: 999 }])
+
+    for (const range of ranges.ranges) {
+      t.ok(range.start <= range.end)
+    }
+
+    return ranges
+  })
+
+  const res = await app.inject({
+    url: '/',
+    headers: { range: 'bytes=0-99, 900-999' }
+  })
+
+  t.equal(res.statusCode, 200)
+})
+
 test('Failure Expectations with throwOnInvalid:true', async t => {
   const app = await buildApp(t, { throwOnInvalid: true })
 

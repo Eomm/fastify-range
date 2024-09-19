@@ -32,7 +32,7 @@ function fastifyRange (fastify, options, next) {
 }
 
 const plugin = fp(fastifyRange, {
-  fastify: '^4.x',
+  fastify: '^5.x',
   name: 'fastify-range'
 })
 
