@@ -2,7 +2,7 @@
 
 [![ci](https://github.com/Eomm/fastify-range/actions/workflows/ci.yml/badge.svg)](https://github.com/Eomm/fastify-range/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/fastify-range)](https://www.npmjs.com/package/fastify-range)
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![neostandard javascript style](https://img.shields.io/badge/code_style-neostandard-brightgreen?style=flat)](https://github.com/neostandard/neostandard)
 
 This Fastify plugin adds support for the [`Range` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Range).  
 It provides the same API as `expressjs`'s `req.range(size[, options])` with a consistent response.
