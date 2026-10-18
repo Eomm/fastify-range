@@ -1,6 +1,6 @@
 'use strict'
 
-const { test } = require('tap')
+const { test } = require('node:test')
 const fastify = require('fastify')
 
 const plugin = require('../index')
@@ -8,7 +8,7 @@ const plugin = require('../index')
 async function buildApp (t, opts) {
   const app = fastify()
   app.register(plugin, opts)
-  t.teardown(() => app.close())
+  t.after(() => app.close())
 
   return app
 }
@@ -19,12 +19,12 @@ test('Basic usage', async t => {
   const app = await buildApp(t)
 
   app.get('/', (req, reply) => {
-    t.ok(app.hasRequestDecorator('range'))
+    t.assert.ok(app.hasRequestDecorator('range'))
     return {}
   })
 
   const res = await app.inject('/')
-  t.equal(res.statusCode, 200)
+  t.assert.strictEqual(res.statusCode, 200)
 })
 
 test('Expectations', async t => {
@@ -48,8 +48,8 @@ test('Expectations', async t => {
       headers: { ...(range ? { range } : {}) }
     })
 
-    t.equal(res.statusCode, 200)
-    t.same(res.json(), out)
+    t.assert.strictEqual(res.statusCode, 200)
+    t.assert.deepStrictEqual(res.json(), out)
   }
 })
 
@@ -58,15 +58,7 @@ test('Expectations - can loop ranges', async t => {
   t.plan(5)
 
   app.get('/', (req, reply) => {
-    const ranges = req.range(1000, { combine: false })
-    t.equal(ranges.ranges.length, 2)
-    t.same(ranges.ranges, [{ start: 0, end: 99 }, { start: 900, end: 999 }])
-
-    for (const range of ranges.ranges) {
-      t.ok(range.start <= range.end)
-    }
-
-    return ranges
+    return req.range(1000, { combine: false })
   })
 
   const res = await app.inject({
@@ -74,7 +66,13 @@ test('Expectations - can loop ranges', async t => {
     headers: { range: 'bytes=0-99, 900-999' }
   })
 
-  t.equal(res.statusCode, 200)
+  t.assert.strictEqual(res.statusCode, 200)
+  const body = res.json()
+  t.assert.strictEqual(body.ranges.length, 2)
+  t.assert.deepStrictEqual(body.ranges, [{ start: 0, end: 99 }, { start: 900, end: 999 }])
+  for (const range of body.ranges) {
+    t.assert.ok(range.start <= range.end)
+  }
 })
 
 test('Failure Expectations with throwOnInvalid:true', async t => {
@@ -96,8 +94,8 @@ test('Failure Expectations with throwOnInvalid:true', async t => {
       headers: { ...(range ? { range } : {}) }
     })
 
-    t.equal(res.statusCode, 500)
-    t.same(res.json().message, out)
+    t.assert.strictEqual(res.statusCode, 500)
+    t.assert.deepStrictEqual(res.json().message, out)
   }
 })
 
@@ -120,8 +118,8 @@ test('Failure Expectations with throwOnInvalid:false', async t => {
       headers: { ...(range ? { range } : {}) }
     })
 
-    t.equal(res.statusCode, 200)
-    t.same(res.json(), out)
+    t.assert.strictEqual(res.statusCode, 200)
+    t.assert.deepStrictEqual(res.json(), out)
   }
 })
 
@@ -132,8 +130,8 @@ test('Double register must fail', async t => {
 
   try {
     await app.register(plugin)
-    t.fail()
+    t.assert.fail()
   } catch (error) {
-    t.equal(error.message, 'fastify-range cannot be registered more than once')
+    t.assert.strictEqual(error.message, 'fastify-range cannot be registered more than once')
   }
 })
